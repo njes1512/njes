@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baidu.mapper.RoomMapper">
+  <resultMap id="BaseResultMap" type="com.baidu.entity.Room">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="rid" jdbcType="INTEGER" property="rid" />
+    <result column="tid" jdbcType="INTEGER" property="tid" />
+    <result column="fid" jdbcType="INTEGER" property="fid" />
+    <result column="sid" jdbcType="INTEGER" property="sid" />
+    <result column="price" jdbcType="VARCHAR" property="price" />
+  </resultMap>
+  <!--房间统计  -->
+  <select id="CountList" resultType="com.baidu.entity.Type">
+  	SELECT t1.tname,count(t2.rid) count from g_type t1
+	LEFT JOIN g_room t2 on t1.tid=t2.tid 
+	GROUP BY t1.tid
+  </select>
+  <!-- 房间状态列表 -->
+  <select id="getStateList" resultType="com.baidu.entity.State">
+  	select sid,sname from g_state
+  </select>
+  <!-- 房型列表 -->
+  <select id="getTypeList" resultType="com.baidu.entity.Type">
+  	select tid,tname from g_type
+  </select>
+  <!--列表  -->
+  <select id="hotelList" resultType="com.baidu.entity.Room">
+  		SELECT t1.*,t2.sname,t3.tname from g_room t1 
+		LEFT JOIN g_state t2 ON t1.sid=t2.sid
+		LEFT JOIN g_type t3 ON t1.tid =t3.tid
+  </select>
+  <sql id="Base_Column_List">
+    id, rid, tid, fid, sid, price
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from g_room
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from g_room
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <!--  添加房间-->
+  <insert id="insert" parameterType="com.baidu.entity.Room">
+    insert into g_room (rid, tid, 
+      fid, sid, price)
+    values (#{rid,jdbcType=INTEGER}, #{tid,jdbcType=INTEGER}, 
+      #{fid,jdbcType=INTEGER}, #{sid,jdbcType=INTEGER}, #{price,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.baidu.entity.Room">
+    insert into g_room
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="rid != null">
+        rid,
+      </if>
+      <if test="tid != null">
+        tid,
+      </if>
+      <if test="fid != null">
+        fid,
+      </if>
+      <if test="sid != null">
+        sid,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="rid != null">
+        #{rid,jdbcType=INTEGER},
+      </if>
+      <if test="tid != null">
+        #{tid,jdbcType=INTEGER},
+      </if>
+      <if test="fid != null">
+        #{fid,jdbcType=INTEGER},
+      </if>
+      <if test="sid != null">
+        #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.baidu.entity.Room">
+    update g_room
+    <set>
+      <if test="rid != null">
+        rid = #{rid,jdbcType=INTEGER},
+      </if>
+      <if test="tid != null">
+        tid = #{tid,jdbcType=INTEGER},
+      </if>
+      <if test="fid != null">
+        fid = #{fid,jdbcType=INTEGER},
+      </if>
+      <if test="sid != null">
+        sid = #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.baidu.entity.Room">
+    update g_room
+    set rid = #{rid,jdbcType=INTEGER},
+      tid = #{tid,jdbcType=INTEGER},
+      fid = #{fid,jdbcType=INTEGER},
+      sid = #{sid,jdbcType=INTEGER},
+      price = #{price,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
